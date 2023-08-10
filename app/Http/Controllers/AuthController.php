@@ -10,10 +10,6 @@ class AuthController extends Controller
 {
     public function login()
     {
-
-        if (!empty(Auth::check())) {
-            return redirect('admin/dashboard');
-        }
         return view('Auth.login');
     }
 
@@ -22,9 +18,32 @@ class AuthController extends Controller
         $remember = !empty($request->input('remember')) ? true : false;
 
         if (Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $remember)) {
-            return redirect('admin/dashboard');
+
+            // return redirect('admin/dashboard');
+
+            if (Auth::user()->userType === 1) {
+
+                return redirect('admin/dashboard');
+            } else if (Auth::user()->userType === 2) {
+
+                return redirect('teacher/dashboard');
+            } else if (Auth::user()->userType === 3) {
+
+                return redirect('student/dashboard');
+            } else if (Auth::user()->userType === 4) {
+
+                return redirect('parent/dashboard');
+            }
         } else {
-            return redirect()->back()->with('error', 'please enter Email & Password');
+            return redirect()->back()->with('error', 'please enter Correct
+            Email & Password');
         }
+    }
+
+    public function Logout()
+    {
+        Auth::logout();
+
+        return redirect(url(''));
     }
 }
